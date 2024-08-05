@@ -36,5 +36,11 @@ public class CustomerController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/")
+    public ResponseEntity<Void> updateCustomer(@RequestBody CustomerRequestDTO customerRequestDTO) {
+        customerService.updateCustomer(customerRequestDTO);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

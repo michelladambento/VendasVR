@@ -46,6 +46,14 @@ public class CustomerService {
         } else {
             throw new EntityNotFoundException("Cliente não encontrado com (id): " + id);
         }
+    }
 
+    public void updateCustomer(CustomerRequestDTO customerRequestDTO) {
+        if (customerRepository.existsById(customerRequestDTO.getId())) {
+            CustomerEntity customerEntity = customerConverter.toCustomerEntity(customerRequestDTO);
+            customerRepository.saveAndFlush(customerEntity);
+        } else {
+            throw new EntityNotFoundException("Cliente não encontrado com (id): " + customerRequestDTO.getId());
+        }
     }
 }
