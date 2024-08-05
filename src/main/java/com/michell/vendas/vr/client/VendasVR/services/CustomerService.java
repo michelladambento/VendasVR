@@ -28,8 +28,9 @@ public class CustomerService {
 
     public CustomerResponseDTO saveCustomer(CustomerRequestDTO customerRequestDTO){
         try {
-            CustomerEntity customerEntity = saveCustomer(customerConverter.toCustomerEntity(customerRequestDTO));
-            return customerConverter.toCustomerResponseDTO(customerEntity);
+            CustomerEntity customerEntity = customerConverter.toCustomerEntity(customerRequestDTO);
+            CustomerEntity customerEntitySaved = saveCustomer(customerEntity);
+            return customerConverter.toCustomerResponseDTO(customerEntitySaved);
         }catch (Exception e){
             throw new RuntimeException("Error to save date from user");
         }
