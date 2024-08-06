@@ -1,12 +1,10 @@
 package com.michell.vendas.vr.client.VendasVR.controllers;
 
 import com.michell.vendas.vr.client.VendasVR.converters.ProductConverter;
-import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
+import com.michell.vendas.vr.client.VendasVR.converters.ProductConverterImpl;
 import com.michell.vendas.vr.client.VendasVR.dtos.ProductDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.ResponseDTO;
-import com.michell.vendas.vr.client.VendasVR.dtos.response.RetrieveAllCustomersDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.response.RetrieveAllProductsDTO;
-import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
 import com.michell.vendas.vr.client.VendasVR.entities.ProductEntity;
 import com.michell.vendas.vr.client.VendasVR.services.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,7 @@ public class ProductController {
     private ProductService productService;
 
     @Autowired
-    private ProductConverter productConverter;
+    private ProductConverter productConverterImpl;
 
     @PostMapping("/")
     public ResponseEntity<ResponseDTO> saveCustomer(@RequestBody ProductDTO productDTO){
@@ -39,7 +37,7 @@ public class ProductController {
     @GetMapping("/")
     public ResponseEntity<RetrieveAllProductsDTO> findAllProducts(){
         List<ProductEntity> productsEntities = productService.findAllProducts();
-        List<ProductDTO> customersResponse = productConverter.converter(productsEntities);
+        List<ProductDTO> customersResponse = productConverterImpl.converterToListDto(productsEntities);
         RetrieveAllProductsDTO response = new RetrieveAllProductsDTO(true, "Produtos recuperado com sucesso.");
         response.setProducts(customersResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);

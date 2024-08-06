@@ -1,6 +1,6 @@
 package com.michell.vendas.vr.client.VendasVR.services;
 
-import com.michell.vendas.vr.client.VendasVR.converters.CustomerConverter;
+import com.michell.vendas.vr.client.VendasVR.converters.CustomerConverterImpl;
 import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
 import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
 import com.michell.vendas.vr.client.VendasVR.exceptions.DefaultAlreadyExistException;
@@ -22,7 +22,7 @@ public class CustomerService {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private CustomerConverter customerConverter;
+    private CustomerConverterImpl customerConverterImpl;
 
     @Autowired
     private CustomerSpecifications customerSpecifications;

@@ -1,7 +1,7 @@
 package com.michell.vendas.vr.client.VendasVR.services;
 
-import com.michell.vendas.vr.client.VendasVR.converters.CustomerConverter;
-import com.michell.vendas.vr.client.VendasVR.converters.PurchaserOrderConverter;
+import com.michell.vendas.vr.client.VendasVR.converters.CustomerConverterImpl;
+import com.michell.vendas.vr.client.VendasVR.converters.PurchaserOrderConverterImpl;
 import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.ProductDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.ProductItemDTO;
@@ -26,10 +26,10 @@ import java.util.Set;
 public class PurchaserOrderService {
 
     @Autowired
-    private PurchaserOrderConverter purchaserOrderConverter;
+    private PurchaserOrderConverterImpl purchaserOrderConverterImpl;
 
     @Autowired
-    private CustomerConverter customerConverter;
+    private CustomerConverterImpl customerConverterImpl;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -42,7 +42,7 @@ public class PurchaserOrderService {
         checkDateIsValid(customerEntity, dto);
         checkTotalOrder(customerEntity, dto);
         hasDuplicateProductInList(dto.getProductItens());
-        PurchaserOrderEntity purchaserConverted = purchaserOrderConverter.converter(dto);
+        PurchaserOrderEntity purchaserConverted = purchaserOrderConverterImpl.converter(dto);
 //        falta terminar
 
     }
