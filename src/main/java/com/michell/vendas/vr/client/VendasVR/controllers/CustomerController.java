@@ -3,7 +3,7 @@ package com.michell.vendas.vr.client.VendasVR.controllers;
 import com.michell.vendas.vr.client.VendasVR.converters.CustomerConverter;
 import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.ResponseDTO;
-import com.michell.vendas.vr.client.VendasVR.dtos.response.RetrieveAllCustomersResponseDTO;
+import com.michell.vendas.vr.client.VendasVR.dtos.response.RetrieveAllCustomersDTO;
 import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
 import com.michell.vendas.vr.client.VendasVR.services.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +33,10 @@ public class CustomerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/")
-    public ResponseEntity<RetrieveAllCustomersResponseDTO> findAllUser(){
+    public ResponseEntity<RetrieveAllCustomersDTO> findAllUser(){
         List<CustomerEntity> customersEntities = customerService.findAllUser();
         List<CustomerDTO> customersResponse = customerConverter.convert(customersEntities);
-        RetrieveAllCustomersResponseDTO response = new RetrieveAllCustomersResponseDTO(true, "Clientes recuperado com sucesso.");
+        RetrieveAllCustomersDTO response = new RetrieveAllCustomersDTO(true, "Clientes recuperado com sucesso.");
         response.setCustomers(customersResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
