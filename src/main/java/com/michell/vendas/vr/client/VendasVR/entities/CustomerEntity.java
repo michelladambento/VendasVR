@@ -15,7 +15,9 @@ import java.time.LocalDate;
 public class CustomerEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name= "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cliente_sequence")
+    @SequenceGenerator(name="cliente_sequence", sequenceName = "seq_cliente_id", initialValue = 1, allocationSize = 1)
     private Long id;
 
     @Column(name="nome", nullable = false)
@@ -27,6 +29,7 @@ public class CustomerEntity {
     @Column(name="data_fechamento", nullable = false)
     private LocalDate closingDateAt;
 
-
+    @OneToOne(mappedBy = "customer")
+    private OrderEntity order;
 
 }

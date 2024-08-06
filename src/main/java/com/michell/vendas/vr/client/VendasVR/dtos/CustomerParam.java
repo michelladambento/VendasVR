@@ -1,4 +1,4 @@
-package com.michell.vendas.vr.client.VendasVR.dtos.request;
+package com.michell.vendas.vr.client.VendasVR.dtos;
 
 import lombok.*;
 
@@ -6,10 +6,8 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class CustomerRequestDTO {
+@Generated
+public class CustomerParam {
 
     private Long id;
 

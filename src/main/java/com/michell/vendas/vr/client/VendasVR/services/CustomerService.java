@@ -1,19 +1,24 @@
 package com.michell.vendas.vr.client.VendasVR.services;
 
 import com.michell.vendas.vr.client.VendasVR.converters.CustomerConverter;
-import com.michell.vendas.vr.client.VendasVR.dtos.request.CustomerRequestDTO;
-import com.michell.vendas.vr.client.VendasVR.dtos.response.CustomerResponseDTO;
+import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
+import com.michell.vendas.vr.client.VendasVR.dtos.CustomerParam;
+import com.michell.vendas.vr.client.VendasVR.dtos.CustomerStoreDTO;
 import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
+import com.michell.vendas.vr.client.VendasVR.exceptions.CustomerAlreadyExistException;
+import com.michell.vendas.vr.client.VendasVR.exceptions.CustomerNotFoundException;
 import com.michell.vendas.vr.client.VendasVR.repositories.CustomerRepository;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
+import com.michell.vendas.vr.client.VendasVR.repositories.CustomerSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
+@Scope("prototype")
 @Service
-@RequiredArgsConstructor
 public class CustomerService {
 
     @Autowired
@@ -22,39 +27,55 @@ public class CustomerService {
     @Autowired
     private CustomerConverter customerConverter;
 
-    public CustomerEntity saveCustomer(CustomerEntity customer){
-        return customerRepository.saveAndFlush(customer);
+    @Autowired
+    private CustomerSpecifications customerSpecifications;
+
+    public void saveCustomer(CustomerParam param){
+        checkCustomerExist(param.getCustomerName());
+        CustomerEntity customer = createCustomerEntity(param);
+        customerRepository.saveAndFlush(customer);
+    }
+    private void checkCustomerExist(String customerName){
+        Specification<CustomerEntity> hasCustomer = customerSpecifications.hasCustomerName(customerName);
+        Optional<CustomerEntity> optCustomer = customerRepository.findOne(hasCustomer);
+        if(optCustomer.isPresent())
+            throw new CustomerAlreadyExistException(String.format("Cliente (%s) já existe", customerName));
     }
 
-    public CustomerResponseDTO saveCustomer(CustomerRequestDTO customerRequestDTO){
-        try {
-            CustomerEntity customerEntity = customerConverter.toCustomerEntity(customerRequestDTO);
-            CustomerEntity customerEntitySaved = saveCustomer(customerEntity);
-            return customerConverter.toCustomerResponseDTO(customerEntitySaved);
-        }catch (Exception e){
-            throw new RuntimeException("Error to save date from user");
-        }
+    private CustomerEntity createCustomerEntity(CustomerParam param){
+        CustomerEntity entity = new CustomerEntity();
+        entity.setPurchaseLimit(param.getPurchaseLimit());
+        entity.setCustomerName(param.getCustomerName());
+        entity.setClosingDateAt(param.getClosingDateAt());
+        return entity;
+
     }
 
-    public List<CustomerResponseDTO> findAllUser(){
-        List<CustomerEntity> customersEntity = customerRepository.findAll();
-        return customerConverter.toCustomerResponseDTO(customersEntity);
+    public List<CustomerEntity> findAllUser(){
+        return customerRepository.findAll();
     }
+
+    public CustomerEntity findById(Long customerId){
+        Optional<CustomerEntity> optCustomerEntity = customerRepository.findById(customerId);
+        if(!optCustomerEntity.isPresent())
+            throw new CustomerNotFoundException(customerId);
+        return optCustomerEntity.get();
+    }
+
 
     public void deleteCustomer(Long id){
         if (customerRepository.existsById(id)) {
             customerRepository.deleteById(id);
         } else {
-            throw new EntityNotFoundException("Cliente não encontrado com (id): " + id);
+            throw new CustomerNotFoundException(id);
         }
     }
 
-    public void updateCustomer(CustomerRequestDTO customerRequestDTO) {
-        if (customerRepository.existsById(customerRequestDTO.getId())) {
-            CustomerEntity customerEntity = customerConverter.toCustomerEntity(customerRequestDTO);
-            customerRepository.saveAndFlush(customerEntity);
-        } else {
-            throw new EntityNotFoundException("Cliente não encontrado com (id): " + customerRequestDTO.getId());
-        }
+    public void updateCustomer(CustomerEntity entity, CustomerStoreDTO customerStoreDTO ) {
+        CustomerDTO dto = customerStoreDTO.getCustomer();
+        entity.setClosingDateAt(dto.getClosingDateAt());
+        entity.setCustomerName(dto.getCustomerName());
+        entity.setPurchaseLimit(dto.getPurchaseLimit());
+        customerRepository.saveAndFlush(entity);
     }
 }
