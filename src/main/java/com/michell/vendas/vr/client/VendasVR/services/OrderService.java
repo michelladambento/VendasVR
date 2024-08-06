@@ -3,8 +3,7 @@ package com.michell.vendas.vr.client.VendasVR.services;
 import com.michell.vendas.vr.client.VendasVR.converters.CustomerConverter;
 import com.michell.vendas.vr.client.VendasVR.converters.OrderConverter;
 import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
-import com.michell.vendas.vr.client.VendasVR.dtos.request.OrderRequestDTO;
-import com.michell.vendas.vr.client.VendasVR.dtos.response.OrderDTO;
+import com.michell.vendas.vr.client.VendasVR.dtos.response.RetrieveAllCustomersDTO;
 import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
 import com.michell.vendas.vr.client.VendasVR.entities.OrderEntity;
 import com.michell.vendas.vr.client.VendasVR.exceptions.CustomerNotFoundException;
@@ -39,18 +38,18 @@ public class OrderService {
         return orderRepository.saveAndFlush(order);
     }
 
-    public OrderDTO saveOrder(OrderRequestDTO orderRequestDTO){
-            CustomerDTO customerDTO = orderRequestDTO.getCustomer();
+    public void saveOrder(RetrieveAllCustomersDTO.OrderDTO orderDTO){
+            CustomerDTO customerDTO = orderDTO.getCustomer();
             Long customerId = customerDTO.getId();
             Optional<CustomerEntity> optCustomerEntity = customerRepository.findById(customerId);
             if(!optCustomerEntity.isPresent())
                 throw new CustomerNotFoundException(customerId);
-            checkDateIsValid(optCustomerEntity.get(), orderRequestDTO);
-            checkTotalOrder(optCustomerEntity.get(), orderRequestDTO);
+            checkDateIsValid(optCustomerEntity.get(), orderDTO);
+            checkTotalOrder(optCustomerEntity.get(), orderDTO);
 
             CustomerEntity customerEntity = optCustomerEntity.get();
             Double purchaseLimit = customerEntity.getPurchaseLimit();
-            Double totalOrder = orderRequestDTO.getTotalOrder();
+            Double totalOrder = orderDTO.getTotalOrder();
             Double purchaseLimitUpdated = (purchaseLimit - totalOrder);
             customerEntity.setPurchaseLimit(purchaseLimitUpdated);
             customerRepository.saveAndFlush(customerEntity);
@@ -63,19 +62,18 @@ public class OrderService {
 //            OrderEntity orderEntity = orderConverter.toOrderEntity(orderRequestDTO);
 //            OrderEntity orderEntitySaved = saveOrder(orderEntity);
 //            return orderConverter.toOrderResponseDTO(orderEntitySaved);
-        return null;
     }
 
-    private void checkDateIsValid(CustomerEntity customerEntity, OrderRequestDTO orderRequestDTO){
+    private void checkDateIsValid(CustomerEntity customerEntity, RetrieveAllCustomersDTO.OrderDTO orderDTO){
         LocalDate closingDateAt = customerEntity.getClosingDateAt();
-        LocalDate orderDateAt = orderRequestDTO.getOrderDateAt();
+        LocalDate orderDateAt = orderDTO.getOrderDateAt();
         if (orderDateAt.isAfter(closingDateAt))
             throw new DateOrderValidException(closingDateAt);
     }
 
-    private void checkTotalOrder(CustomerEntity customerEntity, OrderRequestDTO orderRequestDTO){
+    private void checkTotalOrder(CustomerEntity customerEntity, RetrieveAllCustomersDTO.OrderDTO orderDTO){
         Double purchaseLimit = customerEntity.getPurchaseLimit();
-        Double totalOrder = orderRequestDTO.getTotalOrder();
+        Double totalOrder = orderDTO.getTotalOrder();
         LocalDate closingDateAt = customerEntity.getClosingDateAt();
         if(totalOrder > purchaseLimit)
             throw new TotalOrderValidException(purchaseLimit, closingDateAt);
