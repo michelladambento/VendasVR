@@ -18,20 +18,5 @@ public class RetrieveAllCustomersDTO extends ResponseDTO{
         super(success, detail);
     }
 
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class OrderDTO {
 
-        private Long id;
-
-        private LocalDate orderDateAt;
-
-        private CustomerDTO customer;
-
-        private Double totalOrder;
-
-    }
 }

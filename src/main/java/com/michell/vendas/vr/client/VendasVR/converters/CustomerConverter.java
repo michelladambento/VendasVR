@@ -12,7 +12,6 @@ public class CustomerConverter {
 
     public CustomerEntity convert(CustomerEntity entity, CustomerDTO dto){
         entity.setId(dto.getId());
-        entity.setId(dto.getId());
         entity.setCustomerName(dto.getCustomerName());
         entity.setClosingDateAt(dto.getClosingDateAt());
         entity.setPurchaseLimit(dto.getPurchaseLimit());

@@ -19,7 +19,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 //        return notFound(ex);
 //    }
 
-    @ExceptionHandler(value= { CustomerNotFoundException.class, DateOrderValidException.class, TotalOrderValidException.class, CustomerAlreadyExistException.class })
+    @ExceptionHandler(value= { DefaultNotFoundException.class, DateOrderValidException.class, TotalOrderValidException.class, DefaultAlreadyExistException.class })
     public ResponseEntity<Object> handleCustomerNotFoundException(Exception ex, WebRequest request){
         return internalServerError(ex);
     }

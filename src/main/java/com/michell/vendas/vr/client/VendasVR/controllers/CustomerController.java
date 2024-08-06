@@ -26,7 +26,7 @@ public class CustomerController {
     @Autowired
     private CustomerConverter customerConverter;
 
-     @PostMapping("/")
+    @PostMapping("/")
     public ResponseEntity<ResponseDTO> saveCustomer(@RequestBody CustomerDTO customerDTO){
         customerService.saveCustomer(customerDTO);
         ResponseDTO response = new ResponseDTO(true, "Cliente salvo com sucesso.");
