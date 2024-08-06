@@ -35,7 +35,7 @@ public class CustomerController {
     @GetMapping("/")
     public ResponseEntity<RetrieveAllCustomersDTO> findAllUser(){
         List<CustomerEntity> customersEntities = customerService.findAllUser();
-        List<CustomerDTO> customersResponse = customerConverter.convert(customersEntities);
+        List<CustomerDTO> customersResponse = customerConverter.converter(customersEntities);
         RetrieveAllCustomersDTO response = new RetrieveAllCustomersDTO(true, "Clientes recuperado com sucesso.");
         response.setCustomers(customersResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);

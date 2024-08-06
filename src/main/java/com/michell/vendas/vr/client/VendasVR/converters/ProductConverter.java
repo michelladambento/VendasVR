@@ -12,14 +12,14 @@ import java.util.List;
 @Component
 public class ProductConverter {
 
-    public ProductEntity convert(ProductEntity entity, ProductDTO dto){
+    public ProductEntity converter(ProductEntity entity, ProductDTO dto){
         entity.setId(dto.getId());
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         return entity;
     }
 
-    public ProductDTO convert(ProductEntity entity){
+    public ProductDTO converter(ProductEntity entity){
         ProductDTO dto = new ProductDTO();
         dto.setId(entity.getId());
         dto.setDescription(entity.getDescription());
@@ -27,12 +27,28 @@ public class ProductConverter {
         return dto;
     }
 
-    public List<ProductDTO> convert(List<ProductEntity> productsEntities){
+    public List<ProductDTO> converterToListDto(List<ProductEntity> productsEntities){
         List<ProductDTO> productResponseDTO = new ArrayList<>();
         for (ProductEntity productEntity : productsEntities){
-            productResponseDTO.add(convert(productEntity));
+            productResponseDTO.add(converter(productEntity));
         }
         return productResponseDTO;
+    }
+
+    public ProductEntity converter(ProductDTO dto){
+        ProductEntity entity = new ProductEntity();
+        entity.setId(dto.getId());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
+        return entity;
+    }
+
+    public List<ProductEntity> converter(List<ProductDTO> productsDTOs){
+        List<ProductEntity> productsEntities = new ArrayList<>();
+        for (ProductDTO productDTO : productsDTOs){
+            productsEntities.add(converter(productDTO));
+        }
+        return productsEntities;
     }
 
 }

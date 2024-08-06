@@ -39,7 +39,7 @@ public class ProductController {
     @GetMapping("/")
     public ResponseEntity<RetrieveAllProductsDTO> findAllProducts(){
         List<ProductEntity> productsEntities = productService.findAllProducts();
-        List<ProductDTO> customersResponse = productConverter.convert(productsEntities);
+        List<ProductDTO> customersResponse = productConverter.converter(productsEntities);
         RetrieveAllProductsDTO response = new RetrieveAllProductsDTO(true, "Produtos recuperado com sucesso.");
         response.setProducts(customersResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
