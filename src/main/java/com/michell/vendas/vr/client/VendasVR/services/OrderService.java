@@ -2,8 +2,9 @@ package com.michell.vendas.vr.client.VendasVR.services;
 
 import com.michell.vendas.vr.client.VendasVR.converters.CustomerConverter;
 import com.michell.vendas.vr.client.VendasVR.converters.OrderConverter;
+import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.request.OrderRequestDTO;
-import com.michell.vendas.vr.client.VendasVR.dtos.response.OrderResponseDTO;
+import com.michell.vendas.vr.client.VendasVR.dtos.response.OrderDTO;
 import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
 import com.michell.vendas.vr.client.VendasVR.entities.OrderEntity;
 import com.michell.vendas.vr.client.VendasVR.exceptions.CustomerNotFoundException;
@@ -38,32 +39,32 @@ public class OrderService {
         return orderRepository.saveAndFlush(order);
     }
 
-//    public OrderResponseDTO saveOrder(OrderRequestDTO orderRequestDTO){
-//            CustomerRequestDTO customerRequestDTO = orderRequestDTO.getCustomer();
-//            Long customerId = customerRequestDTO.getId();
-//            Optional<CustomerEntity> optCustomerEntity = customerRepository.findById(customerId);
-//            if(!optCustomerEntity.isPresent())
-//                throw new CustomerNotFoundException(customerId);
-//            checkDateIsValid(optCustomerEntity.get(), orderRequestDTO);
-//            checkTotalOrder(optCustomerEntity.get(), orderRequestDTO);
-//
-//            CustomerEntity customerEntity = optCustomerEntity.get();
-//            Double purchaseLimit = customerEntity.getPurchaseLimit();
-//            Double totalOrder = orderRequestDTO.getTotalOrder();
-//            Double purchaseLimitUpdated = (purchaseLimit - totalOrder);
-//            customerEntity.setPurchaseLimit(purchaseLimitUpdated);
-//            customerRepository.saveAndFlush(customerEntity);
-////            ajustar aqui
-////            CustomerResponseDTO customerDTO = customerConverter.toCustomerResponseDTO(customerEntity);
-////            orderRequestDTO.setCustomer(customerDTO);
-//
-////            CustomerEntity customerEntity = customerConverter.toCustomerEntity(orderRequestDTO.getCustomer());
-//
-////            OrderEntity orderEntity = orderConverter.toOrderEntity(orderRequestDTO);
-////            OrderEntity orderEntitySaved = saveOrder(orderEntity);
-////            return orderConverter.toOrderResponseDTO(orderEntitySaved);
-//        return null;
-//    }
+    public OrderDTO saveOrder(OrderRequestDTO orderRequestDTO){
+            CustomerDTO customerDTO = orderRequestDTO.getCustomer();
+            Long customerId = customerDTO.getId();
+            Optional<CustomerEntity> optCustomerEntity = customerRepository.findById(customerId);
+            if(!optCustomerEntity.isPresent())
+                throw new CustomerNotFoundException(customerId);
+            checkDateIsValid(optCustomerEntity.get(), orderRequestDTO);
+            checkTotalOrder(optCustomerEntity.get(), orderRequestDTO);
+
+            CustomerEntity customerEntity = optCustomerEntity.get();
+            Double purchaseLimit = customerEntity.getPurchaseLimit();
+            Double totalOrder = orderRequestDTO.getTotalOrder();
+            Double purchaseLimitUpdated = (purchaseLimit - totalOrder);
+            customerEntity.setPurchaseLimit(purchaseLimitUpdated);
+            customerRepository.saveAndFlush(customerEntity);
+//            ajustar aqui
+//            CustomerResponseDTO customerDTO = customerConverter.toCustomerResponseDTO(customerEntity);
+//            orderRequestDTO.setCustomer(customerDTO);
+
+//            CustomerEntity customerEntity = customerConverter.toCustomerEntity(orderRequestDTO.getCustomer());
+
+//            OrderEntity orderEntity = orderConverter.toOrderEntity(orderRequestDTO);
+//            OrderEntity orderEntitySaved = saveOrder(orderEntity);
+//            return orderConverter.toOrderResponseDTO(orderEntitySaved);
+        return null;
+    }
 
     private void checkDateIsValid(CustomerEntity customerEntity, OrderRequestDTO orderRequestDTO){
         LocalDate closingDateAt = customerEntity.getClosingDateAt();

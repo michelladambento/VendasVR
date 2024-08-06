@@ -1,5 +1,6 @@
 package com.michell.vendas.vr.client.VendasVR.dtos.request;
 
+import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
 import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,7 @@ public class OrderRequestDTO {
 
     private LocalDate orderDateAt;
 
-//    private CustomerRequestDTO customer;
+    private CustomerDTO customer;
 
     private Double totalOrder;
 

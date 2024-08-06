@@ -1,5 +1,6 @@
 package com.michell.vendas.vr.client.VendasVR.dtos.response;
 
+import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -9,13 +10,13 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderResponseDTO {
+public class OrderDTO {
 
     private Long id;
 
     private LocalDate orderDateAt;
 
-    private CustomerResponseDTO customer;
+    private CustomerDTO customer;
 
     private Double totalOrder;
 

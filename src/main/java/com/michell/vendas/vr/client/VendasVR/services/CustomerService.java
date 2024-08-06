@@ -2,8 +2,6 @@ package com.michell.vendas.vr.client.VendasVR.services;
 
 import com.michell.vendas.vr.client.VendasVR.converters.CustomerConverter;
 import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
-import com.michell.vendas.vr.client.VendasVR.dtos.CustomerParam;
-import com.michell.vendas.vr.client.VendasVR.dtos.CustomerStoreDTO;
 import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
 import com.michell.vendas.vr.client.VendasVR.exceptions.CustomerAlreadyExistException;
 import com.michell.vendas.vr.client.VendasVR.exceptions.CustomerNotFoundException;
@@ -30,9 +28,9 @@ public class CustomerService {
     @Autowired
     private CustomerSpecifications customerSpecifications;
 
-    public void saveCustomer(CustomerParam param){
-        checkCustomerExist(param.getCustomerName());
-        CustomerEntity customer = createCustomerEntity(param);
+    public void saveCustomer(CustomerDTO dto){
+        checkCustomerExist(dto.getCustomerName());
+        CustomerEntity customer = createCustomerEntity(dto);
         customerRepository.saveAndFlush(customer);
     }
     private void checkCustomerExist(String customerName){
@@ -42,11 +40,11 @@ public class CustomerService {
             throw new CustomerAlreadyExistException(String.format("Cliente (%s) já existe", customerName));
     }
 
-    private CustomerEntity createCustomerEntity(CustomerParam param){
+    private CustomerEntity createCustomerEntity(CustomerDTO dto){
         CustomerEntity entity = new CustomerEntity();
-        entity.setPurchaseLimit(param.getPurchaseLimit());
-        entity.setCustomerName(param.getCustomerName());
-        entity.setClosingDateAt(param.getClosingDateAt());
+        entity.setPurchaseLimit(dto.getPurchaseLimit());
+        entity.setCustomerName(dto.getCustomerName());
+        entity.setClosingDateAt(dto.getClosingDateAt());
         return entity;
 
     }
@@ -71,8 +69,7 @@ public class CustomerService {
         }
     }
 
-    public void updateCustomer(CustomerEntity entity, CustomerStoreDTO customerStoreDTO ) {
-        CustomerDTO dto = customerStoreDTO.getCustomer();
+    public void updateCustomer(CustomerEntity entity, CustomerDTO dto ) {
         entity.setClosingDateAt(dto.getClosingDateAt());
         entity.setCustomerName(dto.getCustomerName());
         entity.setPurchaseLimit(dto.getPurchaseLimit());
