@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name= "cliente")
@@ -29,7 +30,7 @@ public class CustomerEntity {
     @Column(name="data_fechamento", nullable = false)
     private LocalDate closingDateAt;
 
-    @OneToOne(mappedBy = "customer")
-    private OrderEntity order;
+    @OneToMany(mappedBy = "customer")
+    private List<PurchaserOrderEntity> purchaserOrder;
 
 }

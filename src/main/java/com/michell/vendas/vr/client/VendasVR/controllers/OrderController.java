@@ -2,7 +2,6 @@ package com.michell.vendas.vr.client.VendasVR.controllers;
 
 import com.michell.vendas.vr.client.VendasVR.dtos.ResponseDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.response.RetrieveAllCustomersDTO;
-import com.michell.vendas.vr.client.VendasVR.services.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
-
-    @PostMapping("/")
-    public ResponseEntity<ResponseDTO> saveOrder(@RequestBody RetrieveAllCustomersDTO.OrderDTO orderDTO){
-        orderService.saveOrder(orderDTO);
-        ResponseDTO response = new ResponseDTO(true, "Cliente salvo com sucesso.");
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+//    @Autowired
+//    private OrderService orderService;
+//
+//    @PostMapping("/")
+//    public ResponseEntity<ResponseDTO> saveOrder(@RequestBody RetrieveAllCustomersDTO.OrderDTO orderDTO){
+//        orderService.saveOrder(orderDTO);
+//        ResponseDTO response = new ResponseDTO(true, "Cliente salvo com sucesso.");
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 }
