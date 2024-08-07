@@ -42,6 +42,7 @@ public class CustomerConverterImpl implements CustomerConverter {
     @Override
     public CustomerEntity converter(CustomerDTO dto){
         CustomerEntity entity = new CustomerEntity();
+        entity.setId(dto.getId());
         entity.setCustomerName(dto.getCustomerName());
         entity.setClosingDateAt(dto.getClosingDateAt());
         entity.setPurchaseLimit(dto.getPurchaseLimit());

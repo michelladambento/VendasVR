@@ -31,7 +31,8 @@ public class PurchaserOrderEntity {
     @Column(name = "total_pedido")
     private Double orderTotal;
 
-    @OneToMany(mappedBy = "purchaserOrder")
+    @OneToMany(mappedBy = "purchaserOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductItemEntity> productItens;
+
 
 }

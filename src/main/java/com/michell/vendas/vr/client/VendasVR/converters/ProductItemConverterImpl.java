@@ -25,13 +25,15 @@ public class ProductItemConverterImpl implements ProductItemConverter {
 
     @Override
     public ProductItemEntity converter(ProductItemDTO dto){
-        ProductItemEntity entity = new ProductItemEntity();
-        ProductDTO productDTO = dto.getProduct();
-        entity.setId(dto.getId());
-        entity.setProduct(productConverterImpl.converter(productDTO));
-        entity.setPurchaserOrder(null);
-        entity.setUnitPrice(dto.getUnitPrice());
-        return entity;
+//        ProductItemEntity entity = new ProductItemEntity();
+////        ProductDTO productDTO = dto.getProduct();
+////        entity.setId(dto.getId());
+//        entity.setProduct(productConverterImpl.converter(productDTO));
+////        entity.setPurchaserOrder(purchaserOrderConverterImpl.converter(dto.getPurchaserOrder()));
+//        entity.setUnitPrice(dto.getUnitPrice());
+//        entity.setQtd(dto.getQtd());
+//        return entity;
+        return null;
     }
 
     @Override

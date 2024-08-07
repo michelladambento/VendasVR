@@ -12,11 +12,13 @@ import lombok.Setter;
 @Generated
 public class ProductItemDTO {
 
-    private Long id;
+//    private Long id;
 
-    private PurchaseOrderDTO purchaserOrder;
+//    private PurchaseOrderDTO purchaserOrder;
 
-    private ProductDTO product;
+//    private ProductDTO product;
+
+    private Long productId;
 
     private Integer qtd;
 

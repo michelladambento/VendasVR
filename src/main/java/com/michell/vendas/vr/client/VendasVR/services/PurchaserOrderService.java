@@ -7,20 +7,22 @@ import com.michell.vendas.vr.client.VendasVR.dtos.ProductDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.ProductItemDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.PurchaseOrderDTO;
 import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
+import com.michell.vendas.vr.client.VendasVR.entities.ProductEntity;
+import com.michell.vendas.vr.client.VendasVR.entities.ProductItemEntity;
 import com.michell.vendas.vr.client.VendasVR.entities.PurchaserOrderEntity;
 import com.michell.vendas.vr.client.VendasVR.exceptions.DateOrderValidException;
 import com.michell.vendas.vr.client.VendasVR.exceptions.DefaultAlreadyExistException;
 import com.michell.vendas.vr.client.VendasVR.exceptions.DefaultNotFoundException;
 import com.michell.vendas.vr.client.VendasVR.exceptions.TotalOrderValidException;
 import com.michell.vendas.vr.client.VendasVR.repositories.CustomerRepository;
+import com.michell.vendas.vr.client.VendasVR.repositories.ProductItemRepository;
+import com.michell.vendas.vr.client.VendasVR.repositories.ProductRepository;
+import com.michell.vendas.vr.client.VendasVR.repositories.PurchaserOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class PurchaserOrderService {
@@ -34,17 +36,85 @@ public class PurchaserOrderService {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private ProductItemRepository productItemRepository;
+
+    @Autowired
+    private PurchaserOrderRepository purchaserOrderRepository;
+
     public void savePurchaserOrder(PurchaseOrderDTO dto){
 
-        //find Customer entity e converter
-        CustomerDTO customerDTO = dto.getCustomer();
-        CustomerEntity customerEntity = findCustomer(customerDTO);
-        checkDateIsValid(customerEntity, dto);
-        checkTotalOrder(customerEntity, dto);
-        hasDuplicateProductInList(dto.getProductItens());
-        PurchaserOrderEntity purchaserConverted = purchaserOrderConverterImpl.converter(dto);
-//        falta terminar
+        Optional<CustomerEntity> optCustomerEntity = customerRepository.findById(dto.getCustomerId());
+        if(!optCustomerEntity.isPresent()){
+            String message = String.format("Cliente de ID (%s) não encontrado",dto.getCustomerId());
+            throw new DefaultNotFoundException(message);
+        }
+        CustomerEntity customerEntityFounded = optCustomerEntity.get();
+        checkDateIsValid(customerEntityFounded, dto);
+        checkTotalOrder(customerEntityFounded, dto);
 
+        List<ProductItemDTO> productItens = dto.getProductItens();
+        if(productItens.isEmpty())
+            throw new DefaultNotFoundException("A lista de produto não pode ser vazio.");
+
+        checkForDuplicateIdsInList(productItens);
+
+
+        //-------------------------- Consertar aqui
+        //ProductEntity productEntity
+
+        List<ProductItemEntity> productsEntities = new ArrayList<>();
+        for(ProductItemDTO productItem: productItens){
+            Long productIdDto = productItem.getProductId();
+            Optional<ProductEntity> optProductEntity = productRepository.findById(productIdDto);
+            if(!optProductEntity.isPresent())
+                throw new DefaultNotFoundException(String.format("Produto de ID(%) não encontrado.",productIdDto));
+            ProductEntity productEntity = optProductEntity.get();
+
+            ProductItemEntity productItemEntity = new ProductItemEntity();
+            productItemEntity.setProduct(productEntity);
+            productItemEntity.setQtd(productItem.getQtd());
+            productItemEntity.setUnitPrice(productItem.getUnitPrice());
+            productsEntities.add(productItemEntity);
+        }
+
+        // Cria e configura a entidade do pedido
+        PurchaserOrderEntity purchaserOrderEntity = new PurchaserOrderEntity();
+        CustomerEntity customerEntityWithPurchaseLimitUpdated = updatePurchaseLimit(customerEntityFounded, dto.getOrderTotal());
+        purchaserOrderEntity.setCustomer(customerEntityWithPurchaseLimitUpdated);
+        purchaserOrderEntity.setOrderDateAt(dto.getOrderDateAt());
+        purchaserOrderEntity.setOrderTotal(dto.getOrderTotal());
+
+        // Associa os itens de produto ao pedido meu erro estava aqui
+        for (ProductItemEntity itemEntity : productsEntities) {
+            itemEntity.setPurchaserOrder(purchaserOrderEntity);
+        }
+        purchaserOrderEntity.setProductItens(productsEntities);
+
+        purchaserOrderRepository.saveAndFlush(purchaserOrderEntity);
+    }
+
+    public void checkForDuplicateIdsInList(List<ProductItemDTO> items) {
+        Set<Long> seenIds = new HashSet<>();
+        for (ProductItemDTO item : items) {
+            Long id = item.getProductId();
+            if (id != null) {
+                if (seenIds.contains(id)) {
+                    throw new DefaultNotFoundException(String.format("Produto de ID:(%s) duplicado.", id));
+                }
+                seenIds.add(id);
+            }
+        }
+    }
+
+    private CustomerEntity updatePurchaseLimit(CustomerEntity customerEntity, Double orderTotal){
+        Double purchaseLimit = customerEntity.getPurchaseLimit();
+        Double total = purchaseLimit - orderTotal;
+        customerEntity.setPurchaseLimit(total);
+        return customerEntity;
     }
 
     private void checkDateIsValid(CustomerEntity customerEntity, PurchaseOrderDTO dto){
@@ -55,30 +125,25 @@ public class PurchaserOrderService {
     }
 
     private void checkTotalOrder(CustomerEntity customerEntity, PurchaseOrderDTO purchaseOrderDTO ){
-        List<ProductItemDTO> productItens = purchaseOrderDTO.getProductItens();
-        Double totalOrder = 0.0;
-        for (ProductItemDTO productItem : productItens){
-            Integer qtd = productItem.getQtd();
-            Double unitPrice = productItem.getUnitPrice();
-            totalOrder = totalOrder + (qtd * unitPrice);
-        }
+        Double orderTotal = purchaseOrderDTO.getOrderTotal();
         Double purchaseLimit = customerEntity.getPurchaseLimit();
         LocalDate closingDateAt = customerEntity.getClosingDateAt();
-        if(totalOrder > purchaseLimit)
+        if(orderTotal > purchaseLimit)
             throw new TotalOrderValidException(purchaseLimit, closingDateAt);
     }
 
-    private void hasDuplicateProductInList(List<ProductItemDTO> productItems){
-        Set<ProductDTO> seenProducts = new HashSet<>();
-        for (ProductItemDTO item : productItems) {
-            ProductDTO product = item.getProduct();
-            if (seenProducts.contains(product)) {
-                String message = String.format("Produto: (%s) já existe na lista.", product.getDescription());
-                throw new DefaultAlreadyExistException(message);
-            }
-            seenProducts.add(product);
-        }
-    }
+    //falta acertar lógica
+//    private void hasDuplicateProductInList(List<ProductItemDTO> productItems){
+//        List<ProductDTO> seenProducts = new ArrayList<>();
+//        for (ProductItemDTO item : productItems) {
+//            ProductDTO product = item.getProduct();
+//            if (seenProducts.contains(product)) {
+//                String message = String.format("Produto: (%s) já existe na lista.", product.getDescription());
+//                throw new DefaultAlreadyExistException(message);
+//            }
+//            seenProducts.add(product);
+//        }
+//    }
 
     private CustomerEntity findCustomer(CustomerDTO customerDTO){
         Long customerId = customerDTO.getId();
