@@ -1,9 +1,7 @@
 package com.michell.vendas.vr.client.VendasVR.services;
 
 import com.michell.vendas.vr.client.VendasVR.converters.CustomerConverterImpl;
-import com.michell.vendas.vr.client.VendasVR.converters.PurchaserOrderConverterImpl;
 import com.michell.vendas.vr.client.VendasVR.dtos.CustomerDTO;
-import com.michell.vendas.vr.client.VendasVR.dtos.ProductDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.ProductItemDTO;
 import com.michell.vendas.vr.client.VendasVR.dtos.PurchaseOrderDTO;
 import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
@@ -11,7 +9,6 @@ import com.michell.vendas.vr.client.VendasVR.entities.ProductEntity;
 import com.michell.vendas.vr.client.VendasVR.entities.ProductItemEntity;
 import com.michell.vendas.vr.client.VendasVR.entities.PurchaserOrderEntity;
 import com.michell.vendas.vr.client.VendasVR.exceptions.DateOrderValidException;
-import com.michell.vendas.vr.client.VendasVR.exceptions.DefaultAlreadyExistException;
 import com.michell.vendas.vr.client.VendasVR.exceptions.DefaultNotFoundException;
 import com.michell.vendas.vr.client.VendasVR.exceptions.TotalOrderValidException;
 import com.michell.vendas.vr.client.VendasVR.repositories.CustomerRepository;
@@ -26,9 +23,6 @@ import java.util.*;
 
 @Service
 public class PurchaserOrderService {
-
-    @Autowired
-    private PurchaserOrderConverterImpl purchaserOrderConverterImpl;
 
     @Autowired
     private CustomerConverterImpl customerConverterImpl;
@@ -62,10 +56,7 @@ public class PurchaserOrderService {
 
         checkForDuplicateIdsInList(productItens);
 
-
         //-------------------------- Consertar aqui
-        //ProductEntity productEntity
-
         List<ProductItemEntity> productsEntities = new ArrayList<>();
         for(ProductItemDTO productItem: productItens){
             Long productIdDto = productItem.getProductId();
