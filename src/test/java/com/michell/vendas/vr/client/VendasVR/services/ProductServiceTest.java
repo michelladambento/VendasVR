@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -48,18 +49,17 @@ public class ProductServiceTest {
 
     @Test
     public void saveProductSusccessfully(){
-        //falta concertar
-//        Specification<ProductEntity> mockSpecification =
-//                (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("Detergente"), productDTO.getDescription());
-//        when(specification.hasDescription(productDTO.getDescription())).thenReturn(mockSpecification);
-//        when(repository.findOne(mockSpecification)).thenReturn(Optional.of(productEntity));
-//
-//        productService.saveProduct(productDTO);
-//
-//        verify(repository).findOne(mockSpecification);
-//        verify(repository).saveAndFlush(productEntity);
-
+        Specification<ProductEntity> mockSpecification = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("description"), productDTO.getDescription());
+        when(specification.hasDescription(productDTO.getDescription())).thenReturn(mockSpecification);
+        when(repository.findOne(mockSpecification)).thenReturn(Optional.empty());
+        productService.saveProduct(productDTO);
+        verify(repository).findOne(mockSpecification);
+        verify(repository).saveAndFlush(Mockito.any(ProductEntity.class)); // Verify save was called
     }
+
+
+
 
 
 
