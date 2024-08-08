@@ -21,3 +21,5 @@
    CREATE DATABASE 'vendas-vr';
 3. Atualize o arquivo application.properties com as credenciais do banco
 4. Importe o arquivo de configuração da requisição no postman 'VR - software.postman_collection.json'
+5. Start no Projeto do server.
+6. Baixar o Projeto do cliente na seguinte `[URL JAVASWING](https://github.com/michelladambento/Vendas-VR)` 
