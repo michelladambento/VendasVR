@@ -33,6 +33,8 @@ public class CustomerController {
         ResponseDTO response = new ResponseDTO(true, "Cliente salvo com sucesso.");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
     @GetMapping("/")
     public ResponseEntity<RetrieveAllCustomersDTO> findAllUser(){
         List<CustomerEntity> customersEntities = customerService.findAllUser();
