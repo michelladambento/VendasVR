@@ -18,5 +18,6 @@
 1. Certifique-se de que o PostgreSQL esteja instalado e em execução.
 2. Crie um banco de dados para a aplicação:
    ```sql
-   CREATE DATABASE vendas-vr;
-3.Atualize o arquivo application.properties com as credenciaisdo banco
+   CREATE DATABASE 'vendas-vr';
+3. Atualize o arquivo application.properties com as credenciais do banco
+4. Importe o arquivo de configuração da requisição no postman 'VR - software.postman_collection.json'
