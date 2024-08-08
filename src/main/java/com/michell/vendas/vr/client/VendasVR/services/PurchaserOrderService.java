@@ -123,19 +123,6 @@ public class PurchaserOrderService {
             throw new TotalOrderValidException(purchaseLimit, closingDateAt);
     }
 
-    //falta acertar lógica
-//    private void hasDuplicateProductInList(List<ProductItemDTO> productItems){
-//        List<ProductDTO> seenProducts = new ArrayList<>();
-//        for (ProductItemDTO item : productItems) {
-//            ProductDTO product = item.getProduct();
-//            if (seenProducts.contains(product)) {
-//                String message = String.format("Produto: (%s) já existe na lista.", product.getDescription());
-//                throw new DefaultAlreadyExistException(message);
-//            }
-//            seenProducts.add(product);
-//        }
-//    }
-
     private CustomerEntity findCustomer(CustomerDTO customerDTO){
         Long customerId = customerDTO.getId();
         Optional<CustomerEntity> optCustomerEntity = customerRepository.findById(customerId);

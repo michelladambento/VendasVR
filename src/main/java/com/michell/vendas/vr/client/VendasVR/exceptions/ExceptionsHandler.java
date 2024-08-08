@@ -14,11 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
-//    @ExceptionHandler(value= { CustomerNotFoundException.class })
-//    public ResponseEntity<Object> handleNotFoundException(RuntimeException ex, WebRequest request){
-//        return notFound(ex);
-//    }
-
     @ExceptionHandler(value= { DefaultNotFoundException.class, DateOrderValidException.class, TotalOrderValidException.class, DefaultAlreadyExistException.class })
     public ResponseEntity<Object> handleCustomerNotFoundException(Exception ex, WebRequest request){
         return internalServerError(ex);

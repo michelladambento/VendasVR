@@ -18,8 +18,6 @@ import java.util.List;
 @Generated
 public class PurchaseOrderDTO {
 
-//    private CustomerDTO customer;
-
     private Long customerId;
 
     private LocalDate orderDateAt;
