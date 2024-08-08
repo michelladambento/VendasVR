@@ -28,7 +28,7 @@ public class ProductController {
     private ProductConverter productConverterImpl;
 
     @PostMapping("/")
-    public ResponseEntity<ResponseDTO> saveCustomer(@RequestBody ProductDTO productDTO){
+    public ResponseEntity<ResponseDTO> saveProduct(@RequestBody ProductDTO productDTO){
         productService.saveProduct(productDTO);
         ResponseDTO response = new ResponseDTO(true, "Produto salvo com sucesso.");
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -46,9 +46,9 @@ public class CustomerControllerTest {
 
     @Test
     public void retrieveAllCustomerSuccessfully(){
-        CustomerEntity customerEntity1 = new CustomerEntity();
+        CustomerEntity customerEntity = new CustomerEntity();
         List<CustomerEntity> customerEntities = new ArrayList<>();
-        customerEntities.add(customerEntity1);
+        customerEntities.add(customerEntity);
 
         CustomerDTO customerDTO1 = new CustomerDTO();
         List<CustomerDTO> customerDTOs = new ArrayList<>();
