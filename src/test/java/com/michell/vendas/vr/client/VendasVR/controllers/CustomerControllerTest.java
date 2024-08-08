@@ -19,10 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +75,7 @@ public class CustomerControllerTest {
         doNothing().when(service).deleteCustomer(id);
         ResponseEntity<ResponseDTO> response = customerController.deleteCustomer(id);
         MessageDTO message = response.getBody().getMessage();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(message.isSuccess());
         assertEquals("Cliente deletado com sucesso.", message.getDetails());
         verify(service).deleteCustomer(id);
@@ -89,10 +87,28 @@ public class CustomerControllerTest {
         doNothing().when(service).saveCustomer(dto);
         ResponseEntity<ResponseDTO> response = customerController.saveCustomer(dto);
         MessageDTO message = response.getBody().getMessage();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(message.isSuccess());
         assertEquals("Cliente salvo com sucesso.", message.getDetails());
         verify(service).saveCustomer(dto);
+    }
 
+    @Test
+    public void updateCustomerSuccessfully(){
+        CustomerDTO dto = new CustomerDTO();
+        CustomerEntity entity = new CustomerEntity();
+        dto.setId(1L);
+        Long id = dto.getId();
+        entity.setId(id);
+        when(service.findById(id)).thenReturn(entity);
+        doNothing().when(service).updateCustomer(entity, dto);
+        ResponseEntity<ResponseDTO> response = customerController.updateCustomer(dto);
+        MessageDTO message = response.getBody().getMessage();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(message.isSuccess());
+        assertEquals("Cliente atualizado com sucesso.", message.getDetails());
+        verify(service).findById(id);
+        verify(service).updateCustomer(entity, dto);
     }
 
 }
