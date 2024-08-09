@@ -139,6 +139,36 @@ public class PurchaserOrderServiceTest {
         verify(purchaserOrderRepository, never()).saveAndFlush(any(PurchaserOrderEntity.class));
     }
 
+    @Test
+    public void failedDueToProductItemListIsEmpty(){
+        purchaseOrderDTO.getProductItens().clear();
+        when(customerRepository.findById(purchaseOrderDTO.getCustomerId())).thenReturn(Optional.of(customerEntity));
+        when(productRepository.findById(productItemDTO.getProductId())).thenReturn(Optional.of(productEntity));
+        DefaultNotFoundException exception = assertThrows(DefaultNotFoundException.class, ()->{
+            service.savePurchaserOrder(purchaseOrderDTO);
+        });
+        assertEquals("A lista de produto não pode ser vazio.", exception.getMessage());
+        verify(customerRepository).findById(purchaseOrderDTO.getCustomerId());
+        verify(productRepository, never()).findById(productItemDTO.getProductId());
+        verify(purchaserOrderRepository, never()).saveAndFlush(any(PurchaserOrderEntity.class));
+    }
+
+    @Test
+    public void failedDueToProductItemListIsDuplicated(){
+        purchaseOrderDTO.getProductItens().add(productItemDTO);
+        when(customerRepository.findById(purchaseOrderDTO.getCustomerId())).thenReturn(Optional.of(customerEntity));
+        when(productRepository.findById(productItemDTO.getProductId())).thenReturn(Optional.of(productEntity));
+        DefaultNotFoundException exception = assertThrows(DefaultNotFoundException.class, ()->{
+            service.savePurchaserOrder(purchaseOrderDTO);
+        });
+        String message = String.format("Produto de ID:(%s) duplicado.", productItemDTO.getProductId());
+        assertEquals(message, exception.getMessage());
+        verify(customerRepository).findById(purchaseOrderDTO.getCustomerId());
+        verify(productRepository, never()).findById(productItemDTO.getProductId());
+        verify(purchaserOrderRepository, never()).saveAndFlush(any(PurchaserOrderEntity.class));
+    }
+
+
 
 
 
