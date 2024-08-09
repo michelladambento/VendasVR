@@ -44,8 +44,8 @@ public class ProductServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         productDTO = new ProductDTO();
-        productDTO.setDescription("Detergente");
-        productDTO.setPrice(100.0);
+        productDTO.setDescription("Arroz");
+        productDTO.setPrice(150.0);
 
         productEntity = new ProductEntity();
         productEntity.setDescription("Detergente");
@@ -94,14 +94,6 @@ public class ProductServiceTest {
         verify(repository).findAll();
     }
 
-//    public void deleteProduct(Long id){
-//        if (productRepository.existsById(id)) {
-//            productRepository.deleteById(id);
-//        } else {
-//            String message = String.format("Produto ID:(%s) não encontrado.", id);
-//            throw new DefaultNotFoundException(message);
-//        }
-//    }
     @Test
     public void productDeletedSuccessfully(){
         when(repository.existsById(Mockito.any())).thenReturn(true);
@@ -110,7 +102,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void productNotFoundThrowException(){
+    public void productNotFoundThrowExceptionWhenDelete(){
         when(repository.existsById(Mockito.any())).thenReturn(false);
 
         DefaultNotFoundException exception = assertThrows(DefaultNotFoundException.class, ()->{
@@ -119,4 +111,31 @@ public class ProductServiceTest {
         verify(repository).existsById(Mockito.any());
         verify(repository, never()).deleteById(Mockito.any());
     }
+
+    @Test
+    public void productUpdatedSuccessfully(){
+        productService.updateProduct(productEntity, productDTO);
+        verify(repository).saveAndFlush(productEntity);
+        assertEquals("Arroz", productEntity.getDescription());
+        assertEquals(150.0, productEntity.getPrice());
+    }
+
+    @Test
+    public void productFoundedByIdSuccessfully(){
+        when(repository.findById(1L)).thenReturn(Optional.of(productEntity));
+        productService.findById(1L);
+        verify(repository).findById(1L);
+    }
+
+    @Test
+    public void productNotFoundThrowException(){
+        when(repository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+        DefaultNotFoundException exception = assertThrows(DefaultNotFoundException.class, () -> {
+            productService.findById(1L);
+        });
+        String message = String.format("Produto ID:(%s) não encontrado.", 1L);
+        assertEquals(message, exception.getMessage());
+        verify(repository).findById(Mockito.anyLong());
+    }
+
 }
