@@ -103,9 +103,12 @@ public class PurchaserOrderServiceTest {
         String message = String.format("Cliente de ID (%s) não encontrado", purchaseOrderDTO.getCustomerId());
         assertEquals(message, exception.getMessage());
         verify(customerRepository).findById(purchaseOrderDTO.getCustomerId());
-        verify(productRepository, never()).findById(productItemDTO.getProductId()); //verificar se está correto
+        verify(productRepository, never()).findById(productItemDTO.getProductId());
         verify(purchaserOrderRepository, never()).saveAndFlush(any(PurchaserOrderEntity.class));
     }
+
+    @Test
+
 
 
 
