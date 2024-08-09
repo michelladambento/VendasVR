@@ -25,9 +25,6 @@ import java.util.*;
 public class PurchaserOrderService {
 
     @Autowired
-    private CustomerConverterImpl customerConverterImpl;
-
-    @Autowired
     private CustomerRepository customerRepository;
 
     @Autowired
