@@ -7,7 +7,9 @@ import com.michell.vendas.vr.client.VendasVR.dtos.PurchaseOrderDTO;
 import com.michell.vendas.vr.client.VendasVR.entities.CustomerEntity;
 import com.michell.vendas.vr.client.VendasVR.entities.ProductEntity;
 import com.michell.vendas.vr.client.VendasVR.entities.PurchaserOrderEntity;
+import com.michell.vendas.vr.client.VendasVR.exceptions.DateOrderValidException;
 import com.michell.vendas.vr.client.VendasVR.exceptions.DefaultNotFoundException;
+import com.michell.vendas.vr.client.VendasVR.exceptions.TotalOrderValidException;
 import com.michell.vendas.vr.client.VendasVR.repositories.CustomerRepository;
 import com.michell.vendas.vr.client.VendasVR.repositories.ProductItemRepository;
 import com.michell.vendas.vr.client.VendasVR.repositories.ProductRepository;
@@ -108,6 +110,35 @@ public class PurchaserOrderServiceTest {
     }
 
     @Test
+    public void failedDueToOrderDateIsGraterThanCosingDate(){
+        purchaseOrderDTO.setOrderDateAt(LocalDate.now().plusDays(1));
+        when(customerRepository.findById(purchaseOrderDTO.getCustomerId())).thenReturn(Optional.of(customerEntity));
+        when(productRepository.findById(productItemDTO.getProductId())).thenReturn(Optional.of(productEntity));
+        DateOrderValidException exception = assertThrows(DateOrderValidException.class, ()->{
+            service.savePurchaserOrder(purchaseOrderDTO);
+        });
+        String message = String.format("Data do fechamento: (%s) está vencida, altere no cadastro de cliente.", customerEntity.getClosingDateAt());
+        assertEquals(message, exception.getMessage());
+        verify(customerRepository).findById(purchaseOrderDTO.getCustomerId());
+        verify(productRepository, never()).findById(productItemDTO.getProductId());
+        verify(purchaserOrderRepository, never()).saveAndFlush(any(PurchaserOrderEntity.class));
+    }
+
+    @Test
+    public void failedDueToOrderTotalIsGraterThanPurchaseLimit(){
+        purchaseOrderDTO.setOrderTotal(300.0);
+        when(customerRepository.findById(purchaseOrderDTO.getCustomerId())).thenReturn(Optional.of(customerEntity));
+        when(productRepository.findById(productItemDTO.getProductId())).thenReturn(Optional.of(productEntity));
+        TotalOrderValidException exception = assertThrows(TotalOrderValidException.class, ()->{
+            service.savePurchaserOrder(purchaseOrderDTO);
+        });
+        String message = String.format("Limite disponível: RS(%s) - Data de fechamento: (%s).", customerEntity.getPurchaseLimit(), customerEntity.getClosingDateAt());
+        assertEquals(message, exception.getMessage());
+        verify(customerRepository).findById(purchaseOrderDTO.getCustomerId());
+        verify(productRepository, never()).findById(productItemDTO.getProductId());
+        verify(purchaserOrderRepository, never()).saveAndFlush(any(PurchaserOrderEntity.class));
+    }
+
 
 
 
