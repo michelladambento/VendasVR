@@ -22,9 +22,6 @@ public class CustomerService {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private CustomerConverterImpl customerConverterImpl;
-
-    @Autowired
     private CustomerSpecifications customerSpecifications;
 
     public void saveCustomer(CustomerDTO dto){

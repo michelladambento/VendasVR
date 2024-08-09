@@ -55,7 +55,7 @@ public class ProductServiceTest {
 
 
     @Test
-    public void saveProductSusccessfully(){
+    public void saveProductSuccessfully(){
         Specification<ProductEntity> mockSpecification = (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("description"), productDTO.getDescription());
         when(specification.hasDescription(productDTO.getDescription())).thenReturn(mockSpecification);
