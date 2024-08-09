@@ -53,13 +53,13 @@ public class PurchaserOrderService {
 
         checkForDuplicateIdsInList(productItens);
 
-        //-------------------------- Consertar aqui
+        // trecho mais complexo
         List<ProductItemEntity> productsEntities = new ArrayList<>();
         for(ProductItemDTO productItem: productItens){
             Long productIdDto = productItem.getProductId();
             Optional<ProductEntity> optProductEntity = productRepository.findById(productIdDto);
             if(!optProductEntity.isPresent())
-                throw new DefaultNotFoundException(String.format("Produto de ID(%) não encontrado.",productIdDto));
+                throw new DefaultNotFoundException(String.format("Produto de ID(%s) não encontrado.",productIdDto));
             ProductEntity productEntity = optProductEntity.get();
 
             ProductItemEntity productItemEntity = new ProductItemEntity();
@@ -76,7 +76,7 @@ public class PurchaserOrderService {
         purchaserOrderEntity.setOrderDateAt(dto.getOrderDateAt());
         purchaserOrderEntity.setOrderTotal(dto.getOrderTotal());
 
-        // Associa os itens de produto ao pedido meu erro estava aqui
+        // Associa os itens de produto ao pedido
         for (ProductItemEntity itemEntity : productsEntities) {
             itemEntity.setPurchaserOrder(purchaserOrderEntity);
         }
@@ -118,16 +118,6 @@ public class PurchaserOrderService {
         LocalDate closingDateAt = customerEntity.getClosingDateAt();
         if(orderTotal > purchaseLimit)
             throw new TotalOrderValidException(purchaseLimit, closingDateAt);
-    }
-
-    private CustomerEntity findCustomer(CustomerDTO customerDTO){
-        Long customerId = customerDTO.getId();
-        Optional<CustomerEntity> optCustomerEntity = customerRepository.findById(customerId);
-        if(!optCustomerEntity.isPresent()){
-            String message = String.format("Cliente ID:(%s) não encontrado.", customerId);
-            throw new DefaultNotFoundException(message);
-        }
-        return optCustomerEntity.get();
     }
 
 }

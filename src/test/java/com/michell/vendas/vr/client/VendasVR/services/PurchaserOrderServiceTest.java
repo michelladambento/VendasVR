@@ -168,6 +168,30 @@ public class PurchaserOrderServiceTest {
         verify(purchaserOrderRepository, never()).saveAndFlush(any(PurchaserOrderEntity.class));
     }
 
+//    @Test
+//    public void savePurchaserOrderSuccessfully(){
+//        when(customerRepository.findById(purchaseOrderDTO.getCustomerId())).thenReturn(Optional.of(customerEntity));
+//        when(productRepository.findById(productItemDTO.getProductId())).thenReturn(Optional.of(productEntity));
+//        service.savePurchaserOrder(purchaseOrderDTO);
+//        verify(customerRepository).findById(purchaseOrderDTO.getCustomerId());
+//        verify(productRepository).findById(productItemDTO.getProductId());
+//        verify(purchaserOrderRepository).saveAndFlush(Mockito.any(PurchaserOrderEntity.class));
+//    }
+
+    @Test
+    public void failedBecauseProductIDNotFounded(){
+        when(customerRepository.findById(purchaseOrderDTO.getCustomerId())).thenReturn(Optional.of(customerEntity));
+        when(productRepository.findById(productItemDTO.getProductId())).thenReturn(Optional.empty());
+        DefaultNotFoundException exception = assertThrows(DefaultNotFoundException.class, ()->{
+            service.savePurchaserOrder(purchaseOrderDTO);
+        });
+        String message = String.format("Produto de ID(%s) não encontrado.", productItemDTO.getProductId());
+        assertEquals(message, exception.getMessage());
+        verify(customerRepository).findById(purchaseOrderDTO.getCustomerId());
+        verify(productRepository).findById(productItemDTO.getProductId());
+        verify(purchaserOrderRepository, never()).saveAndFlush(any(PurchaserOrderEntity.class));
+    }
+
 
 
 
